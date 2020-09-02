@@ -29,6 +29,8 @@ def intersection(x1,y1,x2,y2):
     INTERSECTIONS Intersections of curves.
     Computes the (x,y) locations where two curves intersect.  The curves
     can be broken with NaNs or have vertical segments.
+
+    This part of the code was taken from: https://github.com/sukhbinder/intersection
     """
     ii,jj=_rectangle_intersection_(x1,y1,x2,y2)
     n=len(ii)
@@ -81,11 +83,37 @@ def _mad(a, axis=None):
     return mad
 
 
-def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,projection = 'AUTO'):
+def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margin=10, verbose=False):
+    """
+    Computes the *Linking Number* between two three dimentional curves.
 
-    # Buscamos las coordenadas donda las curvas este menos 'colapsadas'
-    # Para esto calculamos la 'mad'(Median Absolute Deviation) en cada dimension
-    # Proyectamos sobre las dimensiones con mayor valor de mad
+    Inputs
+    curve_1: array_like
+        array of shape (3, N1) with N1 the number of points of curve 1
+    curve_2: array_like
+        array of shape (3, N2) with N2 the number of points of curve 1
+    projection: {'XY','ZX','YZ','AUTO'}, optional
+        Projection plane where the intersections will be computed (default 'AUTO')
+    puntos_curva: int, optional
+        Number of interpolation for B-spline method (default 5000)
+    margin:  int, optional
+        Distance from intercetption to compute the vector (default 10)
+    verbose: boolean, optional
+        Print information about the computation (default False)
+
+    Outputs
+    total: float
+        Linking Number (it should always be an integer, if not, check changin parameters)
+    coords_1: 
+        Coordinates of intesection points in the fist dimention of the projection plane (XY','ZX' or'YZ').
+    coords_2: 
+        Coordinates of intesection points in the second dimention of the projection plane (XY','ZX' or'YZ').
+
+    """
+
+    # We look for the coordinates where the curves are less 'collapsed'
+    # For this we calculate the 'mad' (Median Absolute Deviation) in each dimension
+    # We project on the dimensions with the highest value of mad
     if projection == 'AUTO':
         mad_x = _mad(curve_1[0]) + _mad(curve_2[0])
         mad_y = _mad(curve_1[1]) + _mad(curve_2[1])
@@ -93,55 +121,62 @@ def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,pro
         if mad_z <= mad_x and mad_z <= mad_y:
             curve_1_projected = curve_1
             curve_2_projected = curve_2
-            #print('Auto-Projection: XY')
+            if verbose == True:
+                print('Auto-Projection: XY')
         else:
             if mad_y <= mad_x and mad_y <= mad_x:
                 curve_1_projected = [curve_1[2],curve_1[0],curve_1[1]]
                 curve_2_projected = [curve_2[2],curve_2[0],curve_2[1]]
-                #print('Auto-Projection: ZX')
+                if verbose == True:
+                    print('Auto-Projection: ZX')
 
             else:
                 if mad_x <= mad_y and mad_x <= mad_z:
                     curve_1_projected = [curve_1[1],curve_1[2],curve_1[0]]
                     curve_2_projected = [curve_2[1],curve_2[2],curve_2[0]]
-                    #print('Auto-Projection: YZ')
+                    if verbose == True:
+                        print('Auto-Projection: YZ')
 
     if projection == 'XY':
+        if verbose == True:
+                    print('Projection: XY')
         curve_1_projected = curve_1
         curve_2_projected = curve_2
 
     if projection == 'ZX':
+        if verbose == True:
+                    print('Projection: ZX')
         curve_1_projected = [curve_1[2],curve_1[0],curve_1[1]]
         curve_2_projected = [curve_2[2],curve_2[0],curve_2[1]]
 
     if projection == 'YZ':
+        if verbose == True:
+                    print('Projection: YZ')
         curve_1_projected = [curve_1[1],curve_1[2],curve_1[0]]
         curve_2_projected = [curve_2[1],curve_2[2],curve_2[0]]
         
-    # Ountos Curva:
-    # Valor que determina la resolución con la que vamos a parametrizar las curvas
-    # (a mayor resolución, mejor será el resultado de '_closer_point_index')
+    # Puntos Curva:
+    # Value that determines the resolution with which we are going to resample the curves
+    # (the higher the resolution, the better the result of '_closer_point_index')
    
-
-    # Definimos el vector con el que interpolaremos las curvas
+    # We define the vector with which we will interpolate the curves
     pasos_curva = np.divide(1,puntos_curva)
     unew = np.arange(0, 1+np.divide(pasos_curva,2), pasos_curva)
 
-    # Interpolamos ambas curvas
+    # Interpolation of both curves
     tck, u = interpolate.splprep(curve_1_projected, s=0,k=1)
     [c1_dim1, c1_dim2,c1_dim3] = interpolate.splev(unew, tck)
     tck, u = interpolate.splprep(curve_2_projected, s=0,k=1)
     [c2_dim1, c2_dim2,c2_dim3] = interpolate.splev(unew, tck)
 
-    # Calculamos la intersección entre las mismas
+    # We compute the intersection between both curves
     coords_1,coords_2=intersection(c1_dim1,c1_dim2,c2_dim1,c2_dim2)
-
 
     sign = []
     arriba = []
     total = 0
 
-    # Iteramos sobre cada punto de intersección
+    # We iterate over each intersection found
     for num in range(len(coords_1)):
 
         point = np.asarray([coords_1[num],coords_2[num]])
@@ -157,8 +192,8 @@ def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,pro
         inter_index_2 = _closer_point_index(curve_2,point)
 
         
-        # Si la intersección se da cerca al final de la curva
-        # la suma de margin puede exeder el largo de la misma
+        # If the intersection is near the end of the curve
+        # the sum of 'margin' can exceed the length of it
         if inter_index_1 + margin >= len(curve_1):
             final_1 = curve_1[inter_index_1+margin-len(curve_1)]
         else:
@@ -168,8 +203,8 @@ def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,pro
         else:
             final_2 = curve_2[inter_index_2+margin]
 
-        # El el caso del inicio se resuelve solo
-        # (un indice negativo consulta de atras para adelante el vector)
+        # In the case of the beginning of the curve it resolves itself
+        # (a negative index checks the vector backwards)
         inicio_1 = curve_1[inter_index_1-margin]
         inicio_2 = curve_2[inter_index_2-margin]
 
@@ -181,24 +216,24 @@ def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,pro
         #print('Altura_1 : ',c1_dim3[inter_index_1])
         #print('Altura_2 : ',c2_dim3[inter_index_2])
 
-        # Chequeamos cual curva pasa por arriba en la intersección (En la coordenada que NO usamos en la proyección)
-        # Calculamos el producto vectorial para saber si va horario o anti-horario
+        # We check which curve passes overhead at the intersection (In the coordinate that we do NOT use in the projection)
+        # We compute the vector product to know if it goes clockwise or counter-clockwise
         if c1_dim3[inter_index_1] > c2_dim3[inter_index_2]:
             if verbose == True:
-                print('Pasa por arriba curva 1')
+                print('Upper curve: Curve 1')
             arriba.append(0)
             prod_vec = np.cross(flecha_1,flecha_2)
 
         else:
             if verbose == True:
-                print('Pasa por arriba curva 2')
+                print('Upper curve: Curve 2')
             arriba.append(1)
             prod_vec = np.cross(flecha_2,flecha_1)
             
         if verbose == True:
-            print('Prod vec:',prod_vec)
+            print('Vector Product:',prod_vec)
 
-        # Sumamos al total segun el resultado
+        # We add to the total according to the result
         if prod_vec > 0 :
             sign.append(1)
             total = total + 0.5
@@ -209,4 +244,4 @@ def linking_number(curve_1,curve_2,puntos_curva=5000,margin=10,verbose=False,pro
     if verbose == True:
         print('\nLinking number: ', total)
 
-    return total,c1_dim1,c1_dim2,c2_dim1,c2_dim2,arriba,sign,coords_1,coords_2
+    return total,coords_1,coords_2
