@@ -2,7 +2,7 @@
 
 Function to compute the Linking number between two 3-dimentional oriented curves in python.
 
-![Image](https://raw.githubusercontent.com/gon-uri/linking_number/6201178fefff6e83ebf754f8ae72d0539063b8da/Figura_0.pdf)
+<img src="https://github.com/gon-uri/linking_number/blob/master/fig.PNG" alt="figure" width="550">
 
 ---
 #### **Brief description**
