@@ -29,7 +29,7 @@ The parameters to the main function `linking_number` are:
 
     Outputs
     total: float
-        Linking Number (it should always be an integer, if not, check changin parameters)
+        Linking Number (it should always be an integer, if not, check changing parameters)
     coords_1: 
         Coordinates of intesection points in the fist dimention of the projection plane (XY','ZX' or'YZ').
     coords_2: 
