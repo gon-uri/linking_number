@@ -2,6 +2,8 @@
 
 Function to compute the Linking number between two 3-dimentional oriented curves in python.
 
+![Image](https://github.com/gon-uri/linking_number/blob/master/Figura_0.pdf)
+
 ---
 #### **Brief description**
 The function first interpolate both curves using the a B-spline method from `scipy` library, then it projects both curves to a 2-dimentional plane and computes the instersection of the curves in that plane. Then it computes the vector product of the projected oriented curves on each of these intersections to obatain the Linking Number.
