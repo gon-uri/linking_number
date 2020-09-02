@@ -91,7 +91,7 @@ def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margi
     curve_1: array_like
         array of shape (3, N1) with N1 the number of points of curve 1
     curve_2: array_like
-        array of shape (3, N2) with N2 the number of points of curve 1
+        array of shape (3, N2) with N2 the number of points of curve 2
     projection: {'XY','ZX','YZ','AUTO'}, optional
         Projection plane where the intersections will be computed (default 'AUTO')
     puntos_curva: int, optional
