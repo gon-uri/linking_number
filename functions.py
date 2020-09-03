@@ -97,7 +97,7 @@ def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margi
     puntos_curva: int, optional
         Number of interpolation for B-spline method (default 5000)
     margin:  int, optional
-        Distance from intercetption to compute the vector (default 10)
+        Distance taken from intersection to compute the vector (default 10)
     verbose: boolean, optional
         Print information about the computation (default False)
 
@@ -208,8 +208,8 @@ def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margi
         inicio_1 = curve_1[inter_index_1-margin]
         inicio_2 = curve_2[inter_index_2-margin]
 
-        # Definimos un vector que indique la direccion y sentido del flujo en el punto de intersección
-        # (lo hacemos restando un punto de un instante anterior a un punto de un instante posterior)
+        # We define a vector that indicates the direction and direction of the flow at the point of intersection
+        # (We do it by subtracting a point from an instant before a point from a later instant)
         flecha_1 = np.subtract(final_1,inicio_1)
         flecha_2 = np.subtract(final_2,inicio_2)
 
