@@ -85,7 +85,7 @@ def _mad(a, axis=None):
 
 def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margin=10, verbose=False):
     """
-    Computes the *Linking Number* between two three dimentional curves.
+    Computes the *Linking Number* between two three dimensional curves.
 
     Inputs
     curve_1: array_like
@@ -105,9 +105,9 @@ def linking_number(curve_1,curve_2, projection = 'AUTO',puntos_curva=5000, margi
     total: float
         Linking Number (it should always be an integer, if not, check changin parameters)
     coords_1: 
-        Coordinates of intesection points in the fist dimention of the projection plane (XY','ZX' or'YZ').
+        Coordinates of intesection points in the fist dimension of the projection plane (XY','ZX' or'YZ').
     coords_2: 
-        Coordinates of intesection points in the second dimention of the projection plane (XY','ZX' or'YZ').
+        Coordinates of intesection points in the second dimension of the projection plane (XY','ZX' or'YZ').
 
     """
 
