@@ -6,8 +6,8 @@ Function to compute the Linking number between two 3-dimensional oriented curves
 
 ---
 #### **Brief description**
-The function first interpolate both curves using the a B-spline method from `scipy` library. Then it projects both curves to a 2-dimensional plane and computes the instersection of the curves in that plane. For each intersection, it computes the vector product of the projected oriented curves on that point to check wether it contributes `+` or `-`. Finally it computes the sum all the contributions to obatain the Linking Number.
-For a detailed description of what a Linking Number is and how it is computed, please refer to out paper [here](https://aip.scitation.org/doi/10.1063/5.0013714).
+The function first interpolates both curves using the B-spline method from the `scipy` library. It then projects both curves onto a 2-dimensional plane and computes the intersection of the curves in that plane. For each intersection it computes the vector product of the projected oriented curves at that point to check whether it contributes `+` or `-`. Finally, it computes the sum of all contributions to obtain the linking number.
+For a detailed description of what a Linking Number is and how it is computed, see our paper [here](https://aip.scitation.org/doi/10.1063/5.0013714).
 
 ---
 #### **Main Function**
